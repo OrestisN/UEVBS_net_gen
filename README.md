@@ -9,4 +9,4 @@ This is a work in progress (code will be changing).
 
 "analysis_5.r" will be coming soon.
 
-![alt text](https://github.com/[username]/[reponame]/blob/[branch]/image.jpg?raw=true)
+![alt text](https://github.com/OrestisN/UEVBS_net_gen/blob/main/early_example.PNG?raw=true)
