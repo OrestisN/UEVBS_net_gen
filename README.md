@@ -9,5 +9,5 @@ This is a work in progress (code will be changing).
 
 "analysis_5.r" will be coming soon.
 
-An ealy example of network fomration in genrated spacial data:
+An early example of network formation in generated spatial data:
 ![alt text](https://github.com/OrestisN/UEVBS_net_gen/blob/main/early_example.PNG?raw=true)
