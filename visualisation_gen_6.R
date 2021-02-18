@@ -1,5 +1,6 @@
 #graphing of results
-#will make plotly (interractive) version soon
+#will make plotly (interractive) version soon that only uses the network object
+
 
 
 #plotttin the devices in the 2D space/graph
