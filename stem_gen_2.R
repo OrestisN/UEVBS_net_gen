@@ -1,6 +1,6 @@
 # Generating varible length stem networks
 
-#Need to fix an issue where secodary nodes chose in the stem are closer to  the cnetre (BS)
+#Need to fix an issue where secodary nodes chosen in the stem are closer to  the centre (BS)
 stem_list_gen<-function(n_stem_hops,l_ofeuvbs,ran_badc,n_badc){
   
   stem_cnt<-1
@@ -145,8 +145,8 @@ for (k in gen_stem_list){
 }
 
 
-#creating a list of left over devices that could be uevbs anabled too
-left_over <- function(ued_list,uevbsd_list,stem_list){
+#creating a list of left over devices that could be uevbs enabled too
+left_over_a <- function(ued_list,uevbsd_list,stem_list){
   
   left_over_out_list <- list()
   for (i in ued_list){
@@ -168,4 +168,4 @@ left_over <- function(ued_list,uevbsd_list,stem_list){
   return(left_over_out_list)
 }
 
-left_out_list <- left_over(list_oued,list_ouevbsd,gen_stem_list)
+left_out_list <- left_over_a(list_oued,list_ouevbsd,gen_stem_list)
