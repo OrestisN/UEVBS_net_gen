@@ -22,7 +22,7 @@ leafe_list_gen <- function(stem_list,all_left_dev_list,max_nl){
           break
           print("break")
         }
-        print("here")
+        # print("here")
       }
     }
     if (length(leafe_list)>=1){
@@ -128,3 +128,26 @@ for (q in d){
   list_otreeo[[tree_cnt]] <- eval(as.symbol(clust_name))
   tree_cnt<-tree_cnt + 1  
 }
+
+#A list of all left over devices that can be connected directly to the BS "normally"
+left_over_b <- function(lo_list,clust_leaf_list){
+  out_list<-list()
+  
+  for (i in left_out_list){
+    res <-FALSE
+    for (k in clust_leaf_list){
+      if (list(i) %in% k){
+        
+        # print("here")
+        res<-TRUE
+      }
+    }
+    if(res==FALSE){
+      
+      out_list<-append(out_list,list(i))
+    }
+  }
+  return(out_list)
+}
+
+fleft_out_list <- left_over_b(left_out_list,gend_leafe_list)

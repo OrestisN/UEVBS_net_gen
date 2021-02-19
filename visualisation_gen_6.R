@@ -1,11 +1,11 @@
-#graphing of results
-#will make plotly (interractive) version soon that only uses the network object
-
+#graphing of results for check
+#will make plotly (interractive) version soon that only uses the network object...soon...
 
 
 #plotttin the devices in the 2D space/graph
-par(mfrow=c(1,1),mar=c(3,3,3,3))
-plot(ue_x,ue_y,xlim=c(-(sq_side-1),sq_side-1),ylim=c(-(sq_side-1),sq_side-1))
+par(mfrow=c(1,1))
+plot(ue_x,ue_y,xlim =c(-1,1),ylim=c(-1,1))
+# plot(ue_x,ue_y,xlim=c(-(sq_side-1),sq_side-1),ylim=c(-(sq_side-1),sq_side-1))
 points(0,0,cex=1.5,col="blue")
 points(ue_vbs_x,ue_vbs_y,col="red")
 
@@ -56,3 +56,8 @@ for (i in gen_stem_list){
   stem_cntr <- stem_cntr +1
 } 
 
+for (a in ue_net.0$dev_list){
+  lines(c(0,a$x),c(0,a$y),col = "yellow")
+}
+
+# draw.circle(0,0,c(1))
