@@ -30,22 +30,28 @@ assign(uevbs_net_name,euvbs_network(list_otreeo,net_cntr))
 #need to make sure that devices in badc clusters are not connected (bug not fixed)
 
 ue_network <-function(lo_list,net_no,ran_badc,n_badc){
-  
   net_list<-list()
-  check_place<-0
   for (i in lo_list ){
-    for (t in 0:(n_badc-1)){
+    
+    check_place <- 0
+    flag <- FALSE
+    for (t in 1:n_badc){
       
-      check_place <- point.in.polygon(i$x,i$y,ran_badc[[1]][(1+(t*3)):(3+(t*3))],ran_badc[[2]][(1+(t*3)):(3+(t*3))])
-      print(check_place)
+      check_place <- point.in.polygon(i$x,i$y,
+                                      ran_badc[[1]][(1+((t-1)*3)):(3+((t-1)*3))],
+                                      ran_badc[[2]][(1+((t-1)*3)):(3+((t-1)*3))])
+      if (check_place==1){
+        flag <-TRUE
+        print("PING")
+      }
     }
-    dist_apart <- sqrt((i$x )^2 + (i$y)^2)
-    if ((dist_apart <=1) & (check_place==0)){
+    dist_apart <- sqrt((i$x)^2 + (i$y)^2)
+    if ((dist_apart <= 1) & (flag == FALSE)){
+      
       net_list <- append(net_list,list(i))
     }
   }
-  
-  values <- list(dev_list=net_list)
+  values <- list(dev_list = net_list)
   class(values) <- paste("UEnetwork",as.character(net_no))
   values
 }

@@ -1,47 +1,65 @@
 #creating the clusters and completing the network generated
 #function runs very slowly need to make it faster...
-leafe_list_gen <- function(stem_list,all_left_dev_list,max_nl){
+leafe_list_gen <- function(stem_list,all_left_dev_list,max_nl,min_nl,reach){
   
   av_dev_list <- all_left_dev_list
   clust_cnt <- 1
   out_list<- list()
   for (i in stem_list){
     
+    
     leafe_list <-list()
+    dist_list <- c()
     stem_len <- length(i)
     dev_no<-0
     for (k in all_left_dev_list){
       
       dist_apart<-sqrt((i[[stem_len]]$x - k$x)^2 + (i[[stem_len]]$y - k$y)^2)
       if ( (list(k) %in% av_dev_list) &
-           (dist_apart <= 0.2)){
+           (dist_apart <= reach)){
         
         leafe_list <- append(leafe_list,list(k))
+        dist_list <- append(dist_list,dist_apart)
         dev_no <- dev_no + 1
-        if (dev_no >= max_nl){
-          break
-          print("break")
-        }
+        # if (dev_no >= max_nl){
+        #   print("break")
+        #   break
+        # }
         # print("here")
       }
     }
-    if (length(leafe_list)>=1){
+    leaf_dist_data <- data.frame(1:length(dist_list),dist_list)
+    fin_leafe_list <- list()
+    # print(leaf_dist_data)
+    if (length(leafe_list) >= min_nl){
       
+      leaf_dist_data <- leaf_dist_data[order(leaf_dist_data[,2]),]
+      leaf_dist_data <- leaf_dist_data[!duplicated(leaf_dist_data[,2]),]
       index_vec <- c()
       leafe_list<-leafe_list[!duplicated(leafe_list)]
+      av_dev_amount <- length(leaf_dist_data[,1])
+      if (av_dev_amount <= max_nl){
+        dev_limit<-av_dev_amount
+      }
+      else{
+        dev_limit<-max_nl
+      }
       
-      for (a in leafe_list){
+      for (a in leaf_dist_data[,1][1:dev_limit]){
         
+        # print(leaf_dist_data[,1][1:max_nl])
+        fin_leafe_list <- append(fin_leafe_list,leafe_list[a])
         index_cntr<-1
         
         # print(a)
         
-        id<- attr(a,"class")
+        id<- attr(leafe_list[[a]],"class")
+        # print(id)
+        # print(length(leafe_list))
+        # print(a)
+        # print(leaf_dist_data)
         for (z in av_dev_list){
-          
-          # print(attr(z,"class"))
-          # print(id)
-          
+  
           if(id==attr(z,"class")){
             
             index_vec <- append(index_vec,index_cntr)
@@ -54,11 +72,12 @@ leafe_list_gen <- function(stem_list,all_left_dev_list,max_nl){
         
         av_dev_list <- av_dev_list[-c]
       }
-      out_list[[clust_cnt]] <- leafe_list
+      out_list[[clust_cnt]] <- fin_leafe_list
       clust_cnt <- clust_cnt +1
     }
     else{
-      out_list[[clust_cnt]] <- leafe_list
+      
+      out_list[[clust_cnt]] <- fin_leafe_list
       clust_cnt <- clust_cnt +1
     }
   }
@@ -66,7 +85,7 @@ leafe_list_gen <- function(stem_list,all_left_dev_list,max_nl){
 }
 
 
-gend_leafe_list <- leafe_list_gen(gen_stem_list,left_out_list,max_clust_no)
+gend_leafe_list <- leafe_list_gen(gen_stem_list,left_out_list,max_clust_no,min_clust_no,clust_range)
 
 
 #generating the object list for clusters

@@ -1,7 +1,7 @@
 # Generating varible length stem networks
 
 #Need to fix an issue where secodary nodes chosen in the stem are closer to  the centre (BS)
-stem_list_gen<-function(n_stem_hops,l_ofeuvbs,ran_badc,n_badc){
+stem_list_gen<-function(n_stem_hops,l_ofeuvbs,ran_badc,n_badc,max_dist,min_dist){
   
   stem_cnt<-1
   out_list<-list()
@@ -10,15 +10,19 @@ stem_list_gen<-function(n_stem_hops,l_ofeuvbs,ran_badc,n_badc){
   for (i in l_ofeuvbs){
     stem_list<-list()
     check_place <- 0
+    flag <-FALSE
     for (t in 0:(n_badc-1)){
       
       check_place <- point.in.polygon(i$x,i$y,ran_badc[[1]][(1+(t*3)):(3+(t*3))],ran_badc[[2]][(1+(t*3)):(3+(t*3))])
+    }
+    if (check_place==1){
+      flag <- TRUE
     }
     trailx=c(0)
     traily=c(0)
     for (k in 1:n_stem_hops){
       
-      if((k==1)&(check_place==0)&(list(i) %in% av_uevbs_dev)){
+      if((k==1)&(flag==FALSE)&(list(i) %in% av_uevbs_dev)){
         
         dist_apart1 <- sqrt((trailx[k] - i$x)^2 + (traily[k] - i$y)^2)
         if (dist_apart1<=1){
@@ -37,10 +41,10 @@ stem_list_gen<-function(n_stem_hops,l_ofeuvbs,ran_badc,n_badc){
           if (list(q) %in% av_uevbs_dev){
             
             dist_apart2<-sqrt((trailx[k] - q$x)^2 + (traily[k] - q$y)^2)
-            if ((dist_apart2 <= 0.3) & (dist_apart2 >= 0.1)){
+            if ((dist_apart2 <= max_dist) & (dist_apart2 >= min_dist)){
               
-              posible_dev<-append(posible_dev,list(q))
-              posible_dev_dist=append(posible_dev_dist,dist_apart2)
+              posible_dev <- append(posible_dev,list(q))
+              posible_dev_dist <- append(posible_dev_dist,dist_apart2)
             } 
           }
         }
@@ -49,7 +53,7 @@ stem_list_gen<-function(n_stem_hops,l_ofeuvbs,ran_badc,n_badc){
           orient_l <- orient_check(trailx[k],traily[k],posible_dev)
           if (TRUE %in% orient_l){
             index_of_choice <- match(TRUE,orient_l)
-            # print("here1")
+            print("good orientation!")
           }
           else{
             max_dist <- max(posible_dev_dist)
@@ -114,7 +118,7 @@ orient_check <- function(init_x,init_y,pos_points){
 }
 
 
-gen_stem_list = stem_list_gen(n_hops,list_ouevbsd,badc_clusr,bc_no)
+gen_stem_list = stem_list_gen(n_hops,list_ouevbsd,badc_clusr,bc_no,max_range,min_range)
 
 
 #generating the object list for stems

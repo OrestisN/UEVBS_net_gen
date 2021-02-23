@@ -1,7 +1,7 @@
 #Generating random device objects and "environment" (bad ocverage area)
 
 
-Gendatap<-function(sizesq,init_plambda,sd_dscale,m_dp){
+Gendatap<-function(sizesq,init_plambda,sd_dscale,m_dp,rvbs_per){
   
   #default testing genrative parameters
   # sizesq=3
@@ -30,7 +30,7 @@ Gendatap<-function(sizesq,init_plambda,sd_dscale,m_dp){
   all_y<-append(all_y,etest1$y)
   
   #random sampling of concatenated data to pick out ue-vbs devices
-  uevbsx<-sample(all_x,round(0.05*length(all_x)))
+  uevbsx<-sample(all_x,round((rvbs_per/100)*length(all_x)))
   iuevbsx<-match(uevbsx,all_x)
   
   uevbsyext<-all_y[iuevbsx]
@@ -41,7 +41,7 @@ Gendatap<-function(sizesq,init_plambda,sd_dscale,m_dp){
 }
 
 
-rangenddata<-Gendatap(sq_side,init_intencity,sd_dp,mean_amount_dp)
+rangenddata<-Gendatap(sq_side,init_intencity,sd_dp,mean_amount_dp,uevbs_per)
 ue_x<-unlist(rangenddata[1])
 ue_y<-unlist(rangenddata[2])
 ue_vbs_x<-unlist(rangenddata[3])
