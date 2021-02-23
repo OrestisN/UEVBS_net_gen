@@ -21,16 +21,10 @@ leafe_list_gen <- function(stem_list,all_left_dev_list,max_nl,min_nl,reach){
         leafe_list <- append(leafe_list,list(k))
         dist_list <- append(dist_list,dist_apart)
         dev_no <- dev_no + 1
-        # if (dev_no >= max_nl){
-        #   print("break")
-        #   break
-        # }
-        # print("here")
       }
     }
     leaf_dist_data <- data.frame(1:length(dist_list),dist_list)
     fin_leafe_list <- list()
-    # print(leaf_dist_data)
     if (length(leafe_list) >= min_nl){
       
       leaf_dist_data <- leaf_dist_data[order(leaf_dist_data[,2]),]
@@ -47,17 +41,9 @@ leafe_list_gen <- function(stem_list,all_left_dev_list,max_nl,min_nl,reach){
       
       for (a in leaf_dist_data[,1][1:dev_limit]){
         
-        # print(leaf_dist_data[,1][1:max_nl])
         fin_leafe_list <- append(fin_leafe_list,leafe_list[a])
         index_cntr<-1
-        
-        # print(a)
-        
         id<- attr(leafe_list[[a]],"class")
-        # print(id)
-        # print(length(leafe_list))
-        # print(a)
-        # print(leaf_dist_data)
         for (z in av_dev_list){
   
           if(id==attr(z,"class")){
