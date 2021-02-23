@@ -4,7 +4,7 @@
 
 #plotttin the devices in the 2D space/graph
 par(mfrow=c(1,1))
-plot(ue_x,ue_y,xlim =c(-1,1),ylim=c(-1,1))
+plot(ue_x,ue_y,xlim =c(-1.5,1.5),ylim=c(-1.5,1.5))
 # plot(ue_x,ue_y,xlim=c(-(sq_side-1),sq_side-1),ylim=c(-(sq_side-1),sq_side-1))
 points(0,0,cex=1.5,col="blue")
 points(ue_vbs_x,ue_vbs_y,col="red")
@@ -57,7 +57,8 @@ for (i in gen_stem_list){
 } 
 
 for (a in ue_net.0$dev_list){
+
   lines(c(0,a$x),c(0,a$y),col = "yellow")
 }
 
-# draw.circle(0,0,c(1))
+# draw.circle(0,0,1)

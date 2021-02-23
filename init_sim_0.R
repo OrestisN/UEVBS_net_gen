@@ -12,19 +12,30 @@ library(plotly)
 sq_side <- 3
 # initial intensity of cluster centres being generated (lambda)
 #note that the random points that are genrated indipendantly form the thomas process ate half of this intensity
-init_intencity <- 10
+init_intencity <- 8
 #standard deviation of daughter points of thomas clusters genrated ("the spread") 
 sd_dp <- 0.05
 #average ammount of points in the clusters generated
 mean_amount_dp <- 10
 #number of bad coverage triangle areas to be genrated in the are 
 bc_no <- 2
+#random sample percentage of generated data that is seen ad a UEVBS enabled device
+uevbs_per <- 10
 
 #network formulation parameters
 
 #max number of hops alowed
-n_hops <- 3
-#max number of devices in clusters alowed
-max_clust_no <- 15
+n_hops <- 2
+#max. allowed range of next stem device
+max_range<- 0.5
+#min. allowed range of next stem device
+min_range<- 0.2
+
+#max. number of devices in clusters alowed
+max_clust_no <- 12
+#min. number of devices in clusters alowed
+min_clust_no <- 4
+#cluster max. reach range 
+clust_range <- 0.25
 
 
