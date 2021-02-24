@@ -13,3 +13,4 @@ An early example of network formation in generated spatial data:
 ![alt text](https://github.com/OrestisN/UEVBS_net_gen/blob/main/early_example.PNG?raw=true)
 A newer and clearer example of network formation in generated spatial data:
 ![alt text](https://github.com/OrestisN/UEVBS_net_gen/blob/main/new_example.png?raw=true)
+P.S. The ranmdom red triangle in the graphs are supposed to be areas of bad coverage.
