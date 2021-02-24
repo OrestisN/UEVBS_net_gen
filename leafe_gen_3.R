@@ -1,12 +1,11 @@
 #creating the clusters and completing the network generated
-#function runs very slowly need to make it faster...
+#WARWNING function runs for a long time (need to make it faster...soon...)
 leafe_list_gen <- function(stem_list,all_left_dev_list,max_nl,min_nl,reach){
   
   av_dev_list <- all_left_dev_list
   clust_cnt <- 1
   out_list<- list()
   for (i in stem_list){
-    
     
     leafe_list <-list()
     dist_list <- c()
@@ -23,10 +22,11 @@ leafe_list_gen <- function(stem_list,all_left_dev_list,max_nl,min_nl,reach){
         dev_no <- dev_no + 1
       }
     }
-    leaf_dist_data <- data.frame(1:length(dist_list),dist_list)
+    print(dist_list)
     fin_leafe_list <- list()
     if (length(leafe_list) >= min_nl){
       
+      leaf_dist_data <- data.frame(1:length(dist_list),dist_list)
       leaf_dist_data <- leaf_dist_data[order(leaf_dist_data[,2]),]
       leaf_dist_data <- leaf_dist_data[!duplicated(leaf_dist_data[,2]),]
       index_vec <- c()
@@ -124,20 +124,24 @@ ue_st_net <- function (stem_obj,clust_obj,net_no){
 
 tree_cnt <- 1
 list_otreeo <- list()
-
+unused_av_uevbs_dev <- list()
 d <- mapply(list,list_ouevbso,list_oclusto,SIMPLIFY = FALSE)
 for (q in d){
-  
-  clust_name <- paste("uevbs_tree.",as.character(tree_cnt),sep = "")
-  assign(clust_name,ue_st_net(q[1],q[2],tree_cnt))
-  list_otreeo[[tree_cnt]] <- eval(as.symbol(clust_name))
-  tree_cnt<-tree_cnt + 1  
+  if (q[2]!="This is an empty list..."){
+    clust_name <- paste("uevbs_tree.",as.character(tree_cnt),sep = "")
+    assign(clust_name,ue_st_net(q[1],q[2],tree_cnt))
+    list_otreeo[[tree_cnt]] <- eval(as.symbol(clust_name))
+    tree_cnt<-tree_cnt + 1 
+  }
+  else{
+    unused_av_uevbs_dev <- append(unused_av_uevbs_dev,q[[1]]$dev_list) 
+  }
 }
 
 #A list of all left over devices that can be connected directly to the BS "normally"
-left_over_b <- function(lo_list,clust_leaf_list){
+left_over_b <- function(lo_list,clust_leaf_list,unused_stem_dev){
   out_list<-list()
-  
+  out_list<-append(out_list,unused_stem_dev)
   for (i in left_out_list){
     res <-FALSE
     for (k in clust_leaf_list){
@@ -155,4 +159,4 @@ left_over_b <- function(lo_list,clust_leaf_list){
   return(out_list)
 }
 
-fleft_out_list <- left_over_b(left_out_list,gend_leafe_list)
+fleft_out_list <- left_over_b(left_out_list,gend_leafe_list,unused_av_uevbs_dev)

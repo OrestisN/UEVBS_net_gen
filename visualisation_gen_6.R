@@ -1,64 +1,203 @@
-#graphing of results for check
-#will make plotly (interractive) version soon that only uses the network object...soon...
+#graphing of results for checking purposes
+#will make plotly (interractive) version ...soon...
 
-
-#plotttin the devices in the 2D space/graph
-par(mfrow=c(1,1))
-plot(ue_x,ue_y,xlim =c(-1.5,1.5),ylim=c(-1.5,1.5))
-# plot(ue_x,ue_y,xlim=c(-(sq_side-1),sq_side-1),ylim=c(-(sq_side-1),sq_side-1))
-points(0,0,cex=1.5,col="blue")
-points(ue_vbs_x,ue_vbs_y,col="red")
-
-#polygon to shpow where there could be bad coverage, point.in.polygon can be used to check
-for (u in 0:(bc_no-1)){
+bad_net_plot <- function(net_obj,unreachable_devs,ran_tri,n_ran_tri){
+  par(mfrow=c(2,2))
   
-  polygon(badc_clusr[[1]][(1+u*3):(3+u*3)],badc_clusr[[2]][(1+u*3):(3+u*3)], col = NULL, border = "dark red")
-}
-
-
-
-stem_cntr <- 1
-for (i in gen_stem_list){
-  
-  trailx=c(0)
-  traily=c(0)
-  cntr=1 
-  if(length(i)>=1){
+  plot(0,0,cex=1.5,col="blue",xlim =c(-1.5,1.5),ylim=c(-1.5,1.5),
+       main=expression("Generated Network"),
+       sub=expression("Coloured spots represent the location of devices included in our network."),
+       ylab="y-axis of area",
+       xlab="x-axis of area")
+  #polygon to shpow where there could be bad coverage, point.in.polygon can be used to check
+  for (u in 0:(n_ran_tri-1)){
     
-    for (k in i){
+    polygon(ran_tri[[1]][(1+u*3):(3+u*3)],ran_tri[[2]][(1+u*3):(3+u*3)], col = NULL, border = "dark red")
+  }
+  for (z in unreachable_devs){
+    
+    points(z$x,z$y, col="grey")
+  }
+  for (i in network.0$uevbs_net$tree_nets){
+    
+    for (k in i$stem){
       
-      if (cntr==1){
+      for(q in k$dev_list){
         
-        lines(c(trailx[cntr],k$x),c(traily[cntr],k$y),col="green")
+        points(q$x,q$y,col="red")
       }
-      else if(cntr==2){
+    }
+    for(a in i$clust){
+      
+      for(w in a$dev_list){
         
-        lines(c(trailx[cntr],k$x),c(traily[cntr],k$y),col="red")
+        points(w$x,w$y,col="orange")
       }
-      else if(cntr==3){
-        
-        lines(c(trailx[cntr],k$x),c(traily[cntr],k$y),col="blue")
-      }
-      else if (cntr>=4){
-        
-        lines(c(trailx[cntr],k$x),c(traily[cntr],k$y),col="purple")
-      }
-      trailx=append(trailx,k$x)
-      traily=append(traily,k$y)
-      cntr<-cntr+1
-    } 
+    }
   }
-  for (q in gend_leafe_list[[stem_cntr]]){
-    # print(k$x)
-    # print(q$x)
-    lines(c(k$x,q$x),c(k$y,q$y),col="black")
+  for (t in network.0$ue_net$dev_list){
+    points(t$x,t$y,col = "green")
   }
-  stem_cntr <- stem_cntr +1
-} 
-
-for (a in ue_net.0$dev_list){
-
-  lines(c(0,a$x),c(0,a$y),col = "yellow")
+  
+  
+  
+  
+  plot(0,0,cex=1.5,col="blue",xlim =c(-1.5,1.5),ylim=c(-1.5,1.5),
+       main=expression("Generated Network"),
+       sub=expression("Cluster networks"),
+       ylab="y-axis of area",
+       xlab="x-axis of area")
+  for (u in 0:(n_ran_tri-1)){
+    
+    polygon(ran_tri[[1]][(1+u*3):(3+u*3)],ran_tri[[2]][(1+u*3):(3+u*3)], col = NULL, border = "dark red")
+  }
+  for (z in unreachable_devs){
+    
+    points(z$x,z$y, col="grey")
+  }
+  for (i in network.0$uevbs_net$tree_nets){
+    # trail_x <- c()
+    # trail_y <- 0
+    for (k in i$stem){
+      
+      l_dev_no=length(k$dev_list)
+      trail_x<-k$dev_list[[l_dev_no]]$x
+      trail_y<-k$dev_list[[l_dev_no]]$y
+      for(q in k$dev_list){
+        
+        points(q$x,q$y,col="red")
+        
+      }
+      # print(trail_x)
+      # print(trail_x)
+    }
+    # clust_cntr <- 1
+    for(a in i$clust){
+      
+      for(w in a$dev_list){
+        
+        points(w$x,w$y,col="orange")
+        lines(c(trail_x,w$x),c(trail_y,w$y),col="black")
+        # clust_cntr <- clust_cntr + 1
+      }
+    }
+  }
+  for (t in network.0$ue_net$dev_list){
+    points(t$x,t$y,col = "green")
+  }
+  
+  
+  
+  
+  plot(0,0,cex=1.5,col="blue",xlim =c(-1.5,1.5),ylim=c(-1.5,1.5),
+       main=expression("Generated Network"),
+       sub=expression("Relay networks"),
+       ylab="y-axis of area",
+       xlab="x-axis of area")
+  for (u in 0:(n_ran_tri-1)){
+    
+    polygon(ran_tri[[1]][(1+u*3):(3+u*3)],ran_tri[[2]][(1+u*3):(3+u*3)], col = NULL, border = "dark red")
+  }
+  for (z in unreachable_devs){
+    
+    points(z$x,z$y, col="grey")
+  }
+  for (i in network.0$uevbs_net$tree_nets){
+    s_trail_x <- 0
+    s_trail_y <- 0
+    for (k in i$stem){
+      
+      
+      for(q in k$dev_list){
+        
+        points(q$x,q$y,col="red")
+        # print(c(s_trail_x,q$x))
+        # print(c(s_trail_y,q$y))
+        lines(c(s_trail_x,q$x),c(s_trail_y,q$y),col="black")
+        s_trail_x <- q$x
+        s_trail_y <- q$y
+        
+      }
+      # print(trail_x)
+      # print(trail_x)
+    }
+    for(a in i$clust){
+      
+      for(w in a$dev_list){
+        
+        points(w$x,w$y,col="orange")
+      }
+    }
+  }
+  for (t in network.0$ue_net$dev_list){
+    points(t$x,t$y,col = "green")
+  }
+  
+  
+  
+  
+  plot(0,0,cex=1.5,col="blue",xlim =c(-1.5,1.5),ylim=c(-1.5,1.5),
+       main=expression("Generated Network"),
+       sub=expression("Completed UE-VBS networks"),
+       ylab="y-axis of area",
+       xlab="x-axis of area")
+  for (u in 0:(n_ran_tri-1)){
+    
+    polygon(ran_tri[[1]][(1+u*3):(3+u*3)],ran_tri[[2]][(1+u*3):(3+u*3)], col = NULL, border = "dark red")
+  }
+  for (z in unreachable_devs){
+    
+    points(z$x,z$y, col="grey")
+  }
+  for (i in network.0$uevbs_net$tree_nets){
+    s_trail_x <- 0
+    s_trail_y <- 0
+    for (k in i$stem){
+      
+      l_dev_no=length(k$dev_list)
+      trail_x<-k$dev_list[[l_dev_no]]$x
+      trail_y<-k$dev_list[[l_dev_no]]$y
+      for(q in k$dev_list){
+        
+        points(q$x,q$y,col="red")
+        # print(c(s_trail_x,q$x))
+        # print(c(s_trail_y,q$y))
+        lines(c(s_trail_x,q$x),c(s_trail_y,q$y),col="blue")
+        s_trail_x <- q$x
+        s_trail_y <- q$y
+        
+      }
+      # print(trail_x)
+      # print(trail_x)
+    }
+    for(a in i$clust){
+      
+      for(w in a$dev_list){
+        
+        points(w$x,w$y,col="orange")
+        lines(c(trail_x,w$x),c(trail_y,w$y),col="black")
+      }
+    }
+  }
+  for (t in network.0$ue_net$dev_list){
+    points(t$x,t$y,col = "green")
+  }
+  
 }
 
-# draw.circle(0,0,1)
+
+bad_net_plot(network.0,fleft_out_list,badc_clusr,bc_no)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
