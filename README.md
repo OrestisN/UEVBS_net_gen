@@ -12,4 +12,4 @@ This is a work in progress (code will be changing often).
 An early example of network formation in generated spatial data:
 ![alt text](https://github.com/OrestisN/UEVBS_net_gen/blob/main/early_example.PNG?raw=true)
 A newer and clearer example of network formation in generated spatial data:
-![alt text](https://github.com/OrestisN/UEVBS_net_gen/blob/main/new_example.PNG?raw=true)
+![alt text](https://github.com/OrestisN/UEVBS_net_gen/blob/main/new_example.png?raw=true)
