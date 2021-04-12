@@ -2,14 +2,14 @@
 #will make plotly (interractive) version ...soon...
 
 bad_net_plot <- function(net_obj,unreachable_devs,ran_tri,n_ran_tri){
-  par(mfrow=c(2,2))
+  par(mfrow=c(1,1))
   
   plot(0,0,cex=1.5,col="blue",xlim =c(-1.5,1.5),ylim=c(-1.5,1.5),
        main=expression("Generated Network"),
        sub=expression("Coloured spots represent the location of devices included in our network."),
        ylab="y-axis of area",
        xlab="x-axis of area")
-  #polygon to shpow where there could be bad coverage, point.in.polygon can be used to check
+  #polygon to show where there could be bad coverage, point.in.polygon can be used to check
   for (u in 0:(n_ran_tri-1)){
     
     polygon(ran_tri[[1]][(1+u*3):(3+u*3)],ran_tri[[2]][(1+u*3):(3+u*3)], col = NULL, border = "dark red")
@@ -31,18 +31,16 @@ bad_net_plot <- function(net_obj,unreachable_devs,ran_tri,n_ran_tri){
       
       for(w in a$dev_list){
         
-        points(w$x,w$y,col="orange")
+        points(w$x,w$y,col="black")
       }
     }
   }
   for (t in network.0$ue_net$dev_list){
-    points(t$x,t$y,col = "green")
+    points(t$x,t$y,col = "black")
   }
   
   
-  
-  
-  plot(0,0,cex=1.5,col="blue",xlim =c(-1.5,1.5),ylim=c(-1.5,1.5),
+  plot(0,0,cex=1.5,col="blue",xlim =c(-2,2),ylim=c(-2,2),
        main=expression("Generated Network"),
        sub=expression("Cluster networks"),
        ylab="y-axis of area",
@@ -89,7 +87,7 @@ bad_net_plot <- function(net_obj,unreachable_devs,ran_tri,n_ran_tri){
   
   
   
-  plot(0,0,cex=1.5,col="blue",xlim =c(-1.5,1.5),ylim=c(-1.5,1.5),
+  plot(0,0,cex=1.5,col="blue",xlim =c(-2,2),ylim=c(-2,2),
        main=expression("Generated Network"),
        sub=expression("Relay networks"),
        ylab="y-axis of area",
@@ -185,19 +183,4 @@ bad_net_plot <- function(net_obj,unreachable_devs,ran_tri,n_ran_tri){
   
 }
 
-
 bad_net_plot(network.0,fleft_out_list,badc_clusr,bc_no)
-
-
-
-
-
-
-
-
-
-
-
-
-
-

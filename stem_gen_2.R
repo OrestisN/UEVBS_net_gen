@@ -1,7 +1,7 @@
 # Generating varible length stem networks
 
 #Need to fix an issue where secodary nodes chosen in the stem are closer to  the centre (BS)
-stem_list_gen<-function(n_stem_hops,l_ofeuvbs,ran_badc,n_badc,max_dist,min_dist){
+stem_list_gen<-function(n_stem_hops,l_ofeuvbs,ran_badc,n_badc,max_dist,min_dist,init_dist){
   
   stem_cnt<-1
   out_list<-list()
@@ -25,7 +25,7 @@ stem_list_gen<-function(n_stem_hops,l_ofeuvbs,ran_badc,n_badc,max_dist,min_dist)
       if((k==1)&(flag==FALSE)&(list(i) %in% av_uevbs_dev)){
         
         dist_apart1 <- sqrt((trailx[k] - i$x)^2 + (traily[k] - i$y)^2)
-        if (dist_apart1<=1){
+        if (dist_apart1<=init_dist){
           stem_list <-append(stem_list,list(i))
           trailx <- append(trailx,i$x)
           traily <- append(traily,i$y)
@@ -34,7 +34,8 @@ stem_list_gen<-function(n_stem_hops,l_ofeuvbs,ran_badc,n_badc,max_dist,min_dist)
           break
         }
       }
-      else if ((k>1)&(check_place==0)&(list(i) %in% av_uevbs_dev)){
+      #not sure why the flag needs to be false here...doesnt work if that is not there....(FIXED in my head)
+      else if ((k>1)&(flag==FALSE)&(list(i) %in% av_uevbs_dev)){
         posible_dev<-list()
         posible_dev_dist<-c()
         for (q in av_uevbs_dev){
@@ -118,7 +119,7 @@ orient_check <- function(init_x,init_y,pos_points){
 }
 
 
-gen_stem_list = stem_list_gen(n_hops,list_ouevbsd,badc_clusr,bc_no,max_range,min_range)
+gen_stem_list = stem_list_gen(n_hops,list_ouevbsd,badc_clusr,bc_no,max_range,min_range,BS_range)
 
 
 #generating the object list for stems

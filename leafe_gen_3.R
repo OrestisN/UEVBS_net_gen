@@ -22,7 +22,7 @@ leafe_list_gen <- function(stem_list,all_left_dev_list,max_nl,min_nl,reach){
         dev_no <- dev_no + 1
       }
     }
-    print(dist_list)
+    # print(dist_list)
     fin_leafe_list <- list()
     if (length(leafe_list) >= min_nl){
       

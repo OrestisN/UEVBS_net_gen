@@ -1,4 +1,4 @@
-#ANALYSIS fucntions
+# GENERAL ANALYSIS fucntions
 
 gen_stats <- function(net_obj,l_all_devos){
   
@@ -31,6 +31,10 @@ gen_stats <- function(net_obj,l_all_devos){
   print(paste("Average amount of relay hops:",avg_nhops))
   avg_nclust <- clust_dev_cntr/(length(net_obj$uevbs_net$tree_nets))
   print(paste("Average amount of devices in our clusters:",avg_nclust))
+  #need to add the amount of channels that reach BS with and without the UE-VBS system.
+  
+  # this doesnt take into consideration devices in bad coverage areas (triangles)
+  # need to fix this
   prox_dev_cntr <- 0
   for (z in l_all_devos){
     
@@ -41,8 +45,207 @@ gen_stats <- function(net_obj,l_all_devos){
     }
   }
   dev_diff <- net_cntr - prox_dev_cntr
-  print(paste("Amount of extra devices reached due to the UE-VBS system:",dev_diff))
+  print(paste("Amount of extra devices reached due to the UE-VBS system (when compared to a non-uevbs system):",dev_diff))
 } 
+
 
 all_dev_list <-append(list_oued,list_ouevbsd)
 gen_stats(network.0,all_dev_list)
+
+
+PL_ABG_model <- function(dist, BW = 2e9){
+  #ABG model for urban macro (45m-1174)
+  # BW <- #needs to be a bandwidth in accordance to OFDM channels [in GHz]
+  
+  alpha <- 3.3
+  beta <- 17.6
+  gamma <- 2
+  sf_sd <- 9.9
+  
+  Loss <- 10*alpha*log10(dist*1000) + beta + 10*gamma*log10(BW/1e9) + sf_sd
+  
+  return(Loss)
+}
+
+#Signal power to normally connected devices  
+UES <- function(net_obj,Ptransmit,Gtramsmit,Greceive){
+  prue <- c()
+  for (i in net_obj$ue_net$dev_list){
+    disto <- sqrt((0 - i$x)^2 + (0 - i$y)^2)
+    loss <- PL_ABG_model(disto)
+    Pr <- (Ptransmit*Gtramsmit*Greceive*rexp(1))/(10^(loss/10))
+    prue <-append(prue,Pr)
+  }
+  return(prue)
+}  
+
+#Interference power from other UEVBS devices, to normally connected devices  
+UEI <- function(net_obj,Ptransmit,Gtramsmit,Greceive){
+  Irue <- c()
+  for (i in net_obj$ue_net$dev_list){
+    Idev <- c()
+    for (k in net_obj$uevbs_net$tree_nets){
+      for (q in k$stem[[1]]$dev_list){
+      disto <- sqrt((q$x - i$x)^2 + (q$y - i$y)^2)
+      loss <- PL_ABG_model(disto)
+      Pr <- (Ptransmit*Gtramsmit*Greceive*rexp(1))/(10^(loss/10))
+      Idev <-append(Idev,Pr)
+      }
+    }
+    Irue <- append(Irue,sum(Idev))
+  }
+  return(Irue)
+}
+
+#Signal power to UEVBS connected devices  
+UEVBStreeS <-function(net_obj,Ptransmit,Gtramsmit,Greceive){
+  PUEVBS <- list()
+  for (i in net_obj$uevbs_net$tree_nets){
+    stemdevs<-c()
+    flag<-TRUE
+    for (k in i$stem[[1]]$dev_list ){
+      if (flag == TRUE){
+        disto <- sqrt((0 - k$x)^2 + (0 - k$y)^2)
+        flag <- FALSE
+      }else{
+        disto <- sqrt((prevx - k$x)^2 + (prevy - k$y)^2)
+      }
+      loss <- PL_ABG_model(disto)
+      Pr <- (Ptransmit*Gtramsmit*Greceive*rexp(1))/(10^(loss/10))
+      stemdevs <-append(stemdevs,Pr)
+      prevx<-k$x
+      prevy<-k$y
+    }
+    clustdevs<-c()
+    for (q in i$clust[[1]]$dev_list ){
+      disto <- sqrt((k$x - q$x)^2 + (k$y - q$y)^2)
+      loss <- PL_ABG_model(disto)
+      Pr <- (Ptransmit*Gtramsmit*Greceive*rexp(1))/(10^(loss/10))
+      clustdevs <-append(clustdevs,Pr)
+      
+    }
+    treeS <- list(stemdevs,clustdevs)
+    PUEVBS[[length(PUEVBS)+1]] <- treeS
+  }
+  return(PUEVBS)
+} 
+
+
+#Interference power from other UEVBS devices, to UEVBS connected devices  
+UEVBSintetree <- function(net_obj,Ptransmit,Gtramsmit,Greceive){
+  IUEVBSreslist <- list()
+  for (i in net_obj$uevbs_net$tree_nets){
+    treecheck <- attr(i,"class")
+    stemdevs <- c()
+    clustdevs<-c()
+    intvec<-c()
+    for (k in i$stem[[1]]$dev_list){
+      tdevcheck <- attr(k,"class")
+      treelen <- length(i$stem[[1]]$dev_list)
+      if ((treelen!=1) & (tdevcheck != attr(i$stem[[1]]$dev_list[[1]],"class"))){
+        disto <- sqrt((0 - k$x)^2 + (0 - k$y)^2)
+        loss <- PL_ABG_model(disto)
+        Pr <- (Ptransmit*Gtramsmit*Greceive*rexp(1))/(10^(loss/10))
+        intvec<-append(intvec,Pr)
+      }
+      for(a in net_obj$uevbs_net$tree_net){
+        tnow <- attr(a,"class")
+        for (b in a$stem[[1]]$dev_list){
+          dnow <- attr(b, "class")
+          devlist <- lapply(a$stem[[1]]$dev_list, attr, which = "class")
+          if (tnow==treecheck){
+            if (dnow==tdevcheck){
+              Pr<-0
+            }else if (dnow == devlist[match(devlist,tdevcheck)-1]){
+              Pr<-0
+            }
+          }else{
+            disto <- sqrt((b$x - k$x)^2 + (b$y - k$y)^2)
+            loss <- PL_ABG_model(disto)
+            # print(disto)
+            Pr <- (Ptransmit*Gtramsmit*Greceive*rexp(1))/(10^(loss/10))
+          }
+          intvec <- append(intvec,Pr)
+        }
+      }
+      stemdevs <- append(stemdevs,sum(intvec))
+    }
+    intvec<-c()
+    for (q in i$clust[[1]]$dev_list){
+      cdevcheck <- attr(k,"class")
+      
+      disto <- sqrt((0 - q$x)^2 + (0 - q$y)^2)
+      loss <- PL_ABG_model(disto)
+      # print(disto)
+      Pr <- (Ptransmit*Gtramsmit*Greceive*rexp(1))/(10^(loss/10))
+      intvec <- append(intvec,Pr)
+      for(a in net_obj$uevbs_net$tree_net){
+        tnow <- attr(a,"class")
+        for (b in a$stem[[1]]$dev_list){
+          dnow<-attr(b,"class")
+          if ((tnow==treecheck) & 
+              (dnow==attr(a$stem[[1]]$dev_list[[length(a$stem[[1]]$dev_list)]],"class"))){
+            Pr<-0
+          }else{
+            disto <- sqrt((b$x - q$x)^2 + (b$y - q$y)^2)
+            loss <- PL_ABG_model(disto)
+            # print(disto)
+            Pr <- (Ptransmit*Gtramsmit*Greceive*rexp(1))/(10^(loss/10))
+          }
+          intvec <- append(intvec,Pr)
+        }
+      }
+      clustdevs<-append(clustdevs,sum(intvec))
+    }
+    treeS <- list(stemdevs,clustdevs)
+    IUEVBSreslist[[length(IUEVBSreslist)+1]] <- treeS
+  }
+  return(IUEVBSreslist)
+}
+#Calculate all power and intefrence lists
+Snorm<-UES(network.0,1,1,1)
+Inorm<-UEI(network.0,1,1,1)
+Suevbs <- UEVBStreeS(network.0,1,1,1)
+Iuevbs <- UEVBSintetree(network.0,1,1,1)
+
+#calculates the ratio of devices over a threshold SINR
+NumOtage <- function(sue,iue,suevbs,iuevbs,thresh){
+  covered <- 0
+  outage <- 0
+  
+  k<- 1.380649e-23
+  temp <- 293 #room temp 
+  wnpsd <- k*temp
+  BW <- 150e6
+  Npower <- wnpsd * BW
+  
+  SINRue<-sue/(Npower+iue)
+  
+  SIRNuevbs <- list()
+  for (i in seq(1,length(suevbs))){
+    tSINRuevbs <- suevbs[[i]][[1]] / (iuevbs[[i]][[1]] + Npower)
+    SIRNuevbs <- append(SIRNuevbs,tSINRuevbs)
+    
+    cSINRuevbs <- suevbs[[i]][[2]] / (iuevbs[[i]][[2]] + Npower)
+    SIRNuevbs <- append(SIRNuevbs,cSINRuevbs)
+  }
+  SINR <- append(SINRue, SIRNuevbs)
+  boollist <- SINR < thresh
+  
+  for (r in boollist){
+    if (r ==TRUE){
+      outage <- outage +1
+    }else{
+      covered <- covered + 1
+    }
+  }
+  outageratio <-outage/length(boollist) 
+  return(outageratio)
+}
+BW <- 200e6
+MinDR<- 150e6/BW
+SINRTH = 2^MinDR - 1
+
+numout<-NumOtage(Snorm,Inorm,Suevbs,Iuevbs,SINRTH)
+print(numout)
+
