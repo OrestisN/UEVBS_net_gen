@@ -1,6 +1,6 @@
 # Generating varible length stem networks
+# Need to fix an issue where secodary nodes chosen in the stem are closer to  the centre (BS)
 
-#Need to fix an issue where secodary nodes chosen in the stem are closer to  the centre (BS)
 stem_list_gen<-function(n_stem_hops,l_ofeuvbs,ran_badc,n_badc,max_dist,min_dist,init_dist){
   
   stem_cnt<-1
@@ -11,9 +11,12 @@ stem_list_gen<-function(n_stem_hops,l_ofeuvbs,ran_badc,n_badc,max_dist,min_dist,
     stem_list<-list()
     check_place <- 0
     flag <-FALSE
-    for (t in 0:(n_badc-1)){
-      
-      check_place <- point.in.polygon(i$x,i$y,ran_badc[[1]][(1+(t*3)):(3+(t*3))],ran_badc[[2]][(1+(t*3)):(3+(t*3))])
+    if (n_badc>0){
+      for (t in seq(1,n_badc)){
+        
+        check_place <- point.in.polygon(i$x,i$y,unlist(ran_badc[[1]][t:(t*3)]),unlist(ran_badc[[2]][t:(t*3)]))
+      }
+
     }
     if (check_place==1){
       flag <- TRUE
@@ -119,7 +122,7 @@ orient_check <- function(init_x,init_y,pos_points){
 }
 
 
-gen_stem_list = stem_list_gen(n_hops,list_ouevbsd,badc_clusr,bc_no,max_range,min_range,BS_range)
+gen_stem_list = stem_list_gen(n_hops,list_ouevbsd,badc_clusr,n_tri,max_range,min_range,BS_range)
 
 
 #generating the object list for stems

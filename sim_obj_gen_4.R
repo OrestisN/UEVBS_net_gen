@@ -25,9 +25,9 @@ net_cntr<-0
 uevbs_net_name<-paste("uevbs_net.",as.character(net_cntr),sep = "")
 assign(uevbs_net_name,euvbs_network(list_otreeo,net_cntr))
 
-#creation of the "normal" network object,
-#ivolves any device not included in the uevbs network (in proximity to the BS)
-#need to make sure that devices in badc clusters are not connected (bug not fixed)
+# creation of the "normal" network object,
+# involves any device not included in the uevbs network (in proximity to the BS)
+# need to make sure that devices in badc clusters are not connected (bug not fixed)
 
 ue_network <-function(lo_list,net_no,ran_badc,n_badc){
   net_list<-list()
@@ -35,14 +35,16 @@ ue_network <-function(lo_list,net_no,ran_badc,n_badc){
     
     check_place <- 0
     flag <- FALSE
-    for (t in 1:n_badc){
-      
-      check_place <- point.in.polygon(i$x,i$y,
-                                      ran_badc[[1]][(1+((t-1)*3)):(3+((t-1)*3))],
-                                      ran_badc[[2]][(1+((t-1)*3)):(3+((t-1)*3))])
-      if (check_place==1){
-        flag <-TRUE
-        print("PING")
+    if (n_badc>0){
+      for (t in seq(1,n_badc)){
+        
+        check_place <- point.in.polygon(i$x,i$y,
+                                        unlist(ran_badc[[1]][t:(t*3)]),
+                                        unlist(ran_badc[[2]][t:(t*3)]))
+        if (check_place==1){
+          flag <-TRUE
+          print("PING")
+        }
       }
     }
     dist_apart <- sqrt((i$x)^2 + (i$y)^2)
@@ -57,7 +59,7 @@ ue_network <-function(lo_list,net_no,ran_badc,n_badc){
 }
 
 ue_net_name<-paste("ue_net.",as.character(net_cntr),sep = "")
-assign(ue_net_name,ue_network(fleft_out_list,net_cntr,badc_clusr,bc_no))
+assign(ue_net_name,ue_network(fleft_out_list,net_cntr,badc_clusr,n_tri))
 
 network <-function(uevbs_neto,ue_neto,net_no){
   

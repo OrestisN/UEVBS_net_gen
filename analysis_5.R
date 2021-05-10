@@ -1,68 +1,70 @@
-# GENERAL ANALYSIS fucntions
+# GENERAL ANALYSIS fucntions buggy and needs to be modified
 
-gen_stats <- function(net_obj,l_all_devos){
-  
-  net_cntr <- 0
-  net_ue_cntr <- 0
-  net_uevbs_cntr <- 0
-  clust_dev_cntr <- 0
-  stem_dev_cntr <- 0
-  
-  net_ue_cntr <- length(net_obj$ue_net$dev_list)
-  print(paste("UE devices directly connected to BS:",net_ue_cntr))
-  for (i in net_obj$uevbs_net$tree_nets){
-    
-    for (q in i$stem){
-      
-      stem_dev_cntr <- stem_dev_cntr +length(q$dev_list)
-    }
-    for (k in i$clust){
-      
-      clust_dev_cntr<- clust_dev_cntr + length(k$dev_list)
-    }
-  }
-  print(paste("Amount of uevbs devices in stem networks:",stem_dev_cntr))
-  print(paste("Amount of uevbs devices in cluster networks:",clust_dev_cntr))
-  net_uevbs_cntr <- stem_dev_cntr + clust_dev_cntr
-  print(paste("Amount of uevbs devices in our generated network:",net_uevbs_cntr))
-  net_cntr <- net_ue_cntr + net_uevbs_cntr
-  print(paste("Amount of  devices in our generated network:",net_cntr))
-  avg_nhops <- stem_dev_cntr/(length(net_obj$uevbs_net$tree_nets))
-  print(paste("Average amount of relay hops:",avg_nhops))
-  avg_nclust <- clust_dev_cntr/(length(net_obj$uevbs_net$tree_nets))
-  print(paste("Average amount of devices in our clusters:",avg_nclust))
-  #need to add the amount of channels that reach BS with and without the UE-VBS system.
-  
-  # this doesnt take into consideration devices in bad coverage areas (triangles)
-  # need to fix this
-  prox_dev_cntr <- 0
-  for (z in l_all_devos){
-    
-    init_dist <- sqrt((z$x)^2 + (z$y)^2)
-    if (init_dist <=1){
-      
-      prox_dev_cntr <- prox_dev_cntr +1
-    }
-  }
-  dev_diff <- net_cntr - prox_dev_cntr
-  print(paste("Amount of extra devices reached due to the UE-VBS system (when compared to a non-uevbs system):",dev_diff))
-} 
+# gen_stats <- function(net_obj,l_all_devos){
+#   
+#   net_cntr <- 0
+#   net_ue_cntr <- 0
+#   net_uevbs_cntr <- 0
+#   clust_dev_cntr <- 0
+#   stem_dev_cntr <- 0
+#   
+#   net_ue_cntr <- length(net_obj$ue_net$dev_list)
+#   print(paste("UE devices directly connected to BS:",net_ue_cntr))
+#   for (i in net_obj$uevbs_net$tree_nets){
+#     
+#     for (q in i$stem){
+#       
+#       stem_dev_cntr <- stem_dev_cntr +length(q$dev_list)
+#     }
+#     for (k in i$clust){
+#       
+#       clust_dev_cntr<- clust_dev_cntr + length(k$dev_list)
+#     }
+#   }
+#   print(paste("Amount of uevbs devices in stem networks:",stem_dev_cntr))
+#   print(paste("Amount of uevbs devices in cluster networks:",clust_dev_cntr))
+#   net_uevbs_cntr <- stem_dev_cntr + clust_dev_cntr
+#   print(paste("Amount of uevbs devices in our generated network:",net_uevbs_cntr))
+#   net_cntr <- net_ue_cntr + net_uevbs_cntr
+#   print(paste("Amount of  devices in our generated network:",net_cntr))
+#   avg_nhops <- stem_dev_cntr/(length(net_obj$uevbs_net$tree_nets))
+#   print(paste("Average amount of relay hops:",avg_nhops))
+#   avg_nclust <- clust_dev_cntr/(length(net_obj$uevbs_net$tree_nets))
+#   print(paste("Average amount of devices in our clusters:",avg_nclust))
+#   #need to add the amount of channels that reach BS with and without the UE-VBS system.
+#   
+#   # this doesnt take into consideration devices in bad coverage areas (triangles)
+#   # need to fix this
+#   prox_dev_cntr <- 0
+#   for (z in l_all_devos){
+#     
+#     init_dist <- sqrt((z$x)^2 + (z$y)^2)
+#     if (init_dist <=1){
+#       
+#       prox_dev_cntr <- prox_dev_cntr +1
+#     }
+#   }
+#   dev_diff <- net_cntr - prox_dev_cntr
+#   print(paste("Amount of extra devices reached due to the UE-VBS system (when compared to a non-uevbs system):",dev_diff))
+# } 
+# 
+# 
+# all_dev_list <-append(list_oued,list_ouevbsd)
+# gen_stats(network.0,all_dev_list)
+# network.0<-test
 
 
-all_dev_list <-append(list_oued,list_ouevbsd)
-gen_stats(network.0,all_dev_list)
+PL_ABG_model <- function(dist, BW = 10e9){
+  #ABG model for urban macro (45m-1174m)
+  # BW <- needs to be a bandwidth in accordance to OFDM channels [in GHz]
 
-
-PL_ABG_model <- function(dist, BW = 2e9){
-  #ABG model for urban macro (45m-1174)
-  # BW <- #needs to be a bandwidth in accordance to OFDM channels [in GHz]
-  
   alpha <- 3.3
   beta <- 17.6
   gamma <- 2
-  sf_sd <- 9.9
+  #sf_sd <- 9.9
+  sf_sd <- 0
   
-  Loss <- 10*alpha*log10(dist*1000) + beta + 10*gamma*log10(BW/1e9) + sf_sd
+  Loss <- 10*alpha*log10(dist) + beta + 10*gamma*log10(BW / 1e9) + sf_sd
   
   return(Loss)
 }
@@ -202,50 +204,103 @@ UEVBSintetree <- function(net_obj,Ptransmit,Gtramsmit,Greceive){
   }
   return(IUEVBSreslist)
 }
-#Calculate all power and intefrence lists
-Snorm<-UES(network.0,1,1,1)
-Inorm<-UEI(network.0,1,1,1)
-Suevbs <- UEVBStreeS(network.0,1,1,1)
-Iuevbs <- UEVBSintetree(network.0,1,1,1)
+
 
 #calculates the ratio of devices over a threshold SINR
 NumOtage <- function(sue,iue,suevbs,iuevbs,thresh){
-  covered <- 0
+#NumOtage <- function(suevbs,iuevbs,thresh){
+  # covered <- 0
   outage <- 0
   
   k<- 1.380649e-23
   temp <- 293 #room temp 
   wnpsd <- k*temp
-  BW <- 150e6
+  BW <- 1000e6
   Npower <- wnpsd * BW
+
   
   SINRue<-sue/(Npower+iue)
   
   SIRNuevbs <- list()
-  for (i in seq(1,length(suevbs))){
-    tSINRuevbs <- suevbs[[i]][[1]] / (iuevbs[[i]][[1]] + Npower)
-    SIRNuevbs <- append(SIRNuevbs,tSINRuevbs)
-    
-    cSINRuevbs <- suevbs[[i]][[2]] / (iuevbs[[i]][[2]] + Npower)
-    SIRNuevbs <- append(SIRNuevbs,cSINRuevbs)
+  if (length(suevbs)>0){
+    for (i in seq(1,length(suevbs))){
+      # print(seq(1,length(suevbs)))
+      tSINRuevbs <- suevbs[[i]][[1]] / (iuevbs[[i]][[1]] + Npower)
+      SIRNuevbs <- append(SIRNuevbs,tSINRuevbs)
+      
+      cSINRuevbs <- suevbs[[i]][[2]] / (iuevbs[[i]][[2]] + Npower)
+      SIRNuevbs <- append(SIRNuevbs,cSINRuevbs)
+    }
   }
   SINR <- append(SINRue, SIRNuevbs)
+  #print(SIRNuevbs)
+  #SINR <- SIRNuevbs
   boollist <- SINR < thresh
   
   for (r in boollist){
     if (r ==TRUE){
       outage <- outage +1
-    }else{
-      covered <- covered + 1
+    # }else{
+    #   covered <- covered + 1
     }
   }
   outageratio <-outage/length(boollist) 
   return(outageratio)
 }
-BW <- 200e6
-MinDR<- 150e6/BW
+BW <- 1000e6
+MinDR<- 300e6/BW
 SINRTH = 2^MinDR - 1
 
-numout<-NumOtage(Snorm,Inorm,Suevbs,Iuevbs,SINRTH)
-print(numout)
 
+#iterate through saved networks
+zeroresvec<-c()
+oneresvec<-c()
+tworesvec<-c()
+threeresvec<-c()
+fourresvec<-c()
+files <- c("zero hop","one hop","two hop","three hop","four hop")
+for (d in files){
+  fileslist <- list.files(path=d,pattern="int")
+  resvec<-c()
+  for (f in fileslist){
+    avgavgvec<-c()
+    for (n in list.files(paste(d,"\\",f,sep=""))){
+      avgvec<-c()
+      obj <- readRDS(paste(d,"\\",f,"\\",n,sep=""))
+      #check for empty networks
+      if ((length(obj$ue_net$dev_list)==0) & (length(obj$uevbs_net$tree_nets)==0)){
+        avgvec <- append(avgvec,0)
+      }else{
+        for (p in seq(1,20)){
+          #Calculate all power and inteference lists
+          Snorm <- UES(obj,1,1,1)
+          Inorm <- UEI(obj,1,1,1)
+          Suevbs <- UEVBStreeS(obj,1,1,1)
+          Iuevbs <- UEVBSintetree(obj,1,1,1)
+          
+          numout <- NumOtage(Snorm,Inorm,Suevbs,Iuevbs,SINRTH)
+          if (is.nan(numout)){
+            numout<-0
+          }
+          avgvec <- append(avgvec,numout)
+        }
+      }
+      avgavgvec <- append(avgavgvec,mean(avgvec))
+    }
+    resvec <- append(resvec,mean(avgavgvec))
+    print(resvec)
+  }
+  if (d==files[1]){
+    zeroresvec<-resvec
+  }else if (d==files[2]){
+    oneresvec<-resvec
+  }else if (d==files[3]){
+    tworesvec<-resvec
+  }else if (d==files[4]){
+    threeresvec<-resvec
+  }else if (d==files[5]){
+    fourresvec<-resvec
+  }
+}
+
+saveRDS(list(zeroresvec,oneresvec,tworesvec,threeresvec,fourresvec),"iniresults_lowloss_verylow.rds")

@@ -70,7 +70,6 @@ leafe_list_gen <- function(stem_list,all_left_dev_list,max_nl,min_nl,reach){
   return(out_list)
 }
 
-
 gend_leafe_list <- leafe_list_gen(gen_stem_list,left_out_list,max_clust_no,min_clust_no,clust_range)
 
 
