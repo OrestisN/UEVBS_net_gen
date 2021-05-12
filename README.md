@@ -7,7 +7,7 @@ The R files all have numbers in their title signifying the order they should be 
 
 This is a work in progress (code will be changing often).
 
-"analysis_5.r"  and new file called "Analytical outage_7.r" have been aded which attempt to calculate the outage probability. (needs some fixes, which will come soon)
+"analysis_5.r"  and new file called "Analytical outage_7.r" has been added which calculates the outage probability given some assumptions.
 
 An early example of network formation in generated spatial data:
 ![alt text](https://github.com/OrestisN/UEVBS_net_gen/blob/main/early_example.PNG?raw=true)
