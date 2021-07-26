@@ -1,7 +1,7 @@
 #graphing of results for checking purposes
 #will make plotly (interractive) version ...soon...
 
-network.0 <-readRDS("four hop\\int6\\network7.rds")
+#network.0 <-readRDS("four hop\\int6\\network7.rds")
 bad_net_plot <- function(net_obj,unreachable_devs,ran_tri,n_ran_tri){
   par(mfrow=c(1,1))
   
@@ -41,7 +41,6 @@ bad_net_plot <- function(net_obj,unreachable_devs,ran_tri,n_ran_tri){
   # for (t in network.0$ue_net$dev_list){
   #   points(t$x,t$y,col = "black")
   # }
-  
   
   plot(0,0,cex=1.5,col="blue",xlim =c(-2,2),ylim=c(-2,2),
        main=expression("Generated Network"),

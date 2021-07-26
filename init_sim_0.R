@@ -3,8 +3,6 @@
 
 library(spatstat)
 library(sp)
-library(plotly)
-#library(plotrix)
 library(extraDistr)
 
 
@@ -46,9 +44,16 @@ min_clust_no <- 8
 #cluster max. reach range 
 clust_range <- 0.25
 
-#RUNNING FUNCTION uncomment and change paths to create
+#Run for a single network run (displaying purposes)
+source("data_gen_1.R")
+source("stem_gen_2.R")
+source("leafe_gen_3.R")
+source("sim_obj_gen_4.R")
+source("visualisation_gen_6.R")
 
-# for (x in seq(5.5,6,0.5)){
+#RUNNING FUNCTION uncomment and change paths to create a new set of networks for simulation
+#
+# for (x in seq(0.5,6,0.5)){
 # init_intencity <- x
 # filename <- paste("int",toString(x),sep="")
 # dir.create(filename)

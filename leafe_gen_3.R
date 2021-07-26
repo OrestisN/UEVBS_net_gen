@@ -1,5 +1,5 @@
 #creating the clusters and completing the network generated
-#WARWNING function runs for a long time (need to make it faster...soon...)
+#WARWNING function runs for a long time (need to make it faster...)
 leafe_list_gen <- function(stem_list,all_left_dev_list,max_nl,min_nl,reach){
   
   av_dev_list <- all_left_dev_list
