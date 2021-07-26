@@ -5,9 +5,7 @@ The purpose of the project is to create an accurate simulation of the network an
 
 The R files all have numbers in their title signifying the order they should be run in.
 
-This is a work in progress (code will be changing often).
-
-"analysis_5.r"  and new file called "Analytical outage_7.r" has been added which calculates the outage probability given some assumptions.
+"analysis_5.r" and new file called "Analytical outage_7.r" have been added which calculates the outage probability, Spectral Efficiency and Energy Efficiency given some assumptions, numerically and analytically, respectfully.
 
 An early example of network formation in generated spatial data:
 ![alt text](https://github.com/OrestisN/UEVBS_net_gen/blob/main/early_example.PNG?raw=true)
